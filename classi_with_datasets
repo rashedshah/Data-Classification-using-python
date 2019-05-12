@@ -1,0 +1,151 @@
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+import numpy
+
+data_path = 'iris.csv'
+with open(data_path, 'r') as f:
+    reader = csv.reader(f, delimiter=',')
+    # get header from first row
+    headers = next(reader)
+    # get all the rows as a list
+    data = list(reader)
+    # transform data into numpy array
+    data = np.array(data).astype(float)
+print(data.shape)   
+#print(headers)
+print(data[:3])
+#################
+# Plot the data
+plt.plot(data[:, 1], data[:, 0])
+plt.axis('equal')
+plt.xlabel(headers[1])
+plt.ylabel(headers[0])
+plt.show()
+
+plt.plot(data[:,2])
+plt.xlabel('Table Index')
+plt.ylabel(headers[2])
+plt.show()
+###################
+
+
+data_path_level = 'level.csv'
+with open(data_path_level, 'r') as f_l:
+    reader = csv.reader(f_l)
+    # get header from first row
+    #headers = next(reader)
+    # get all the rows as a list
+    data_l = list(reader)
+    # transform data into numpy array
+    data_l = np.array(data_l)
+print(data_l[:3])
+print(data_l.shape)
+size=np.size(data_l,0)
+data_l1 = numpy.zeros(shape=(size,1))
+for i in range(0,size):
+    for j in range(0,1):
+            if(data_l[i,j]=="Iris-setosa"):
+                data_l1[i,j]=1
+            elif(data_l[i,j]=="Iris-versicolor"):
+                data_l1[i,j]=2
+            elif(data_l[i,j]=="Iris-virginica"):
+                data_l1[i,j]=3
+data_l1.astype(int)
+print(data_l1[:3])
+print(type(data_l1))
+###### Test data import
+
+###################
+
+
+
+
+####
+import matplotlib.pyplot as plt
+import numpy as np
+#import cv2
+import skimage.io as skio
+import os
+from skimage.color import rgb2gray
+import fnmatch
+from numpy import loadtxt
+
+import pandas
+#from pandas.tools.plotting import scatter_matrix
+import matplotlib.pyplot as plt
+from sklearn import model_selection
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+#from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+
+validation_size = 0.50
+seed = 7
+path=''
+#features = np.array(np.load(path))
+X_train=data
+print (X_train.shape)
+Y_train=data_l1                                  
+#Y_train=Y_train.T
+#Y_train = column_or_1d(Y_train, warn=True)
+print (Y_train.shape)
+
+
+X_validation=data
+print (X_validation.shape)
+Y_validation=data_l1
+#Y_validation=Y_validation.T
+#Y_validation = column_or_1d(Y_validation, warn=True)
+print (Y_validation.shape)
+
+
+models = []
+models.append(('LR', LogisticRegression()))
+models.append(('KNN', KNeighborsClassifier()))
+models.append(('CART', DecisionTreeClassifier()))
+models.append(('SVM', SVC()))
+
+scoring = 'accuracy'
+results = []
+names = []
+for name, model in models:
+	kfold = model_selection.KFold(n_splits=10, random_state=seed)
+	cv_results = model_selection.cross_val_score(model, X_train, Y_train, cv=kfold, scoring=scoring)
+	results.append(cv_results)
+	names.append(name)
+	msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+	print(msg)
+
+seed = 7
+
+lr = LogisticRegression()
+lr.fit(X_train, Y_train)
+predictions = lr.predict(X_validation)
+print(accuracy_score(Y_validation, predictions))
+
+
+cart = DecisionTreeClassifier()
+cart.fit(X_train, Y_train)
+predictions = cart.predict(X_validation)
+print(accuracy_score(Y_validation, predictions))
+
+
+knn = KNeighborsClassifier()
+knn.fit(X_train, Y_train)
+predictions = knn.predict(X_validation)
+print(accuracy_score(Y_validation, predictions))
+
+sv = SVC()
+sv.fit(X_train, Y_train)
+predictions = sv.predict(X_validation)
+print(accuracy_score(Y_validation, predictions))
+
+
+
+            
